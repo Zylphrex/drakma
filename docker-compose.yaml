@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres:12.3
+    restart: always
+    environment:
+      POSTGRES_DB: drakma
+      POSTGRES_USER: drakma
+      POSTGRES_PASSWORD: drakma
+    ports:
+      - 5432:5432
+    volumes:
+      - drakma-psql:/var/lib/postgresql/data
+
+volumes:
+  drakma-psql:

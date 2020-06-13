@@ -4,7 +4,7 @@ import { createBrowserHistory } from "history";
 import { Router, Route, Switch } from "react-router-dom";
 
 import './index.css';
-import App from './App';
+import Dashboard from "./dashboard/Dashboard";
 import Login from "./account/Login";
 
 import { store } from './app/store';
@@ -18,8 +18,8 @@ ReactDOM.render(
     <Provider store={store}>
       <Router history={history}>
         <Switch>
+          <Route path="/" component={Dashboard} />
           <Route path="/account/login" component={Login} />
-          <Route path="/" component={App} />
         </Switch>
       </Router>
     </Provider>

@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'rest_framework',
-    'account',
 ]
 
 MIDDLEWARE = [
@@ -142,5 +141,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'build', 'media')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-LOGIN_URL = "/account/login/"
+LOGIN_URL = "/login/"
 LOGOUT_REDIRECT_URL = "/"

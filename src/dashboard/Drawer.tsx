@@ -1,4 +1,5 @@
 import React from 'react';
+import Button, { ButtonProps } from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import AppDrawer from '@material-ui/core/Drawer';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -8,6 +9,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MailIcon from '@material-ui/icons/Mail';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 
@@ -37,7 +39,35 @@ interface Props extends WithStyles<typeof styles> {
   onOpen: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+const LogoutButton = React.memo(
+  React.forwardRef<any, Omit<ButtonProps, 'type'>>((props, ref) => (
+    <Button
+      ref={ref}
+      style={{textTransform: 'none'}}
+      type="submit"
+      {...props}
+    />
+  )),
+);
+
 export class Drawer extends React.Component<Props> {
+  renderLogout() {
+    return (
+      <List>
+        <form
+          action="/logout/"
+          method="POST"
+          noValidate
+        >
+          <ListItem component={LogoutButton}>
+            <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </form>
+      </List>
+    );
+  }
+
   renderDrawer() {
     const { classes } = this.props;
 
@@ -62,6 +92,8 @@ export class Drawer extends React.Component<Props> {
             </ListItem>
           ))}
         </List>
+        <Divider />
+        {this.renderLogout()}
       </div>
     );
   }

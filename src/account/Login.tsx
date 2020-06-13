@@ -100,7 +100,7 @@ export class Login extends React.Component<Props> {
 
     return (
       <form
-        action="/account/login/"
+        action="/login/"
         className={classes.form}
         method="POST"
         noValidate

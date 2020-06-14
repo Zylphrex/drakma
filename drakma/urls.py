@@ -19,9 +19,11 @@ from django.urls import include, path
 
 from . import views
 
+
 urlpatterns = [
     path('', views.ReactView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('login/', auth_views.LoginView.as_view(template_name="index.html")),
     path('logout/', auth_views.LogoutView.as_view(template_name="index.html")),
+    path('api/', include('api.urls')),
 ]

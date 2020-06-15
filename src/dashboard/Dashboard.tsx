@@ -3,14 +3,10 @@ import clsx from 'clsx';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 // import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import MenuIcon from '@material-ui/icons/Menu';
+import AppBar from './AppBar';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Drawer from './Drawer';
@@ -31,18 +27,6 @@ const styles = (theme: Theme) => createStyles({
     justifyContent: 'flex-end',
     padding: '0 8px',
     ...theme.mixins.toolbar,
-  },
-  appBar: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
-    },
   },
   title: {
     flexGrow: 1,
@@ -112,25 +96,8 @@ export class Dashboard extends React.Component<Props, State> {
   }
 
   renderAppBar() {
-    const { classes } = this.props;
-
     return (
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={this.handleDrawerOpen}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Dashboard
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <AppBar onOpen={this.handleDrawerOpen} />
     );
   }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import AppDrawer from '@material-ui/core/Drawer';
+import MuiDrawer from '@material-ui/core/Drawer';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Hidden from '@material-ui/core/Hidden';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
@@ -124,7 +124,7 @@ export class Drawer extends React.Component<Props> {
     const { classes } = this.props;
 
     return (
-      <AppDrawer
+      <MuiDrawer
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -132,7 +132,7 @@ export class Drawer extends React.Component<Props> {
         variant="permanent"
       >
         {this.renderDrawer()}
-      </AppDrawer>
+      </MuiDrawer>
     );
   }
 

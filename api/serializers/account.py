@@ -5,4 +5,4 @@ from api.models import Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['slug']
+        fields = ['id', 'slug']

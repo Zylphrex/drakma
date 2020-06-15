@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import AccountMenu from "./AccountMenu";
+import AccountMenu from "../features/accounts/AccountMenu";
 
 
 const styles = (theme: Theme) => createStyles({
@@ -43,18 +43,8 @@ export class AppBar extends React.Component<Props> {
   }
 
   renderAccountMenu() {
-    const accounts = [
-      { slug: "a" },
-      { slug: "b" },
-      { slug: "c" },
-      { slug: "d" },
-    ];
-
     return (
-      <AccountMenu
-        account={accounts[0]}
-        accounts={accounts}
-      />
+      <AccountMenu />
     );
   }
 

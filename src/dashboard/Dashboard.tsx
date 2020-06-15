@@ -6,7 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import AppBar from './appbar/AppBar';
+import AppBar from './AppBar';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Drawer from './Drawer';

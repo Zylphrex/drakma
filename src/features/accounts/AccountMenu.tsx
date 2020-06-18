@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -9,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { Account, AccountState, load, select } from "./accountInfo";
+import { Account, AccountState, load, select } from './account';
 import api from "../../api/client";
 import { RootState } from "../../app/store";
 
@@ -30,11 +31,13 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-type StateProps = AccountState;
+interface StateProps {
+  account: AccountState;
+}
 
 interface DispatchProps {
-  load: (accountState: AccountState) => void;
-  select: (accountId: number) => void;
+  load: (accounts: Account[]) => void;
+  select: (account: Account) => void;
 }
 
 type Props = WithStyles<typeof styles> & StateProps & DispatchProps;
@@ -50,20 +53,8 @@ class AccountMenu extends React.Component<Props, State> {
 
   async componentDidMount() {
     const { load } = this.props;
-
-    const response = await api.get("/api/accounts");
-    const accounts = response.data;
-
-    const allAccounts: Record<number, Account> = {};
-    const defaultAccountId = accounts[0].id;
-    accounts.forEach((account: Account) => {
-      allAccounts[account.id] = account;
-    });
-
-    load({
-      selected: defaultAccountId,
-      allAccounts,
-    });
+    const { data: accounts } = await api.get("/api/accounts/");
+    load(accounts);
   }
 
   handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -79,17 +70,19 @@ class AccountMenu extends React.Component<Props, State> {
   }
 
   handleMenuSelect(i: number) {
-    const { select } = this.props;
-    return (event: React.MouseEvent<HTMLLIElement>) => {
+    const { select, account: { accounts } } = this.props;
+    return async (event: React.MouseEvent<HTMLLIElement>) => {
       this.setState({
         anchor: null,
       });
-      select(i);
+      const account = accounts[i];
+      await api.post("/api/current_account/", {...account});
+      select(account);
     };
   }
 
   renderAccountButton() {
-    const { classes, selected, allAccounts } = this.props;
+    const { classes, account: { id, accounts } } = this.props;
 
     return (
       <Button
@@ -101,7 +94,7 @@ class AccountMenu extends React.Component<Props, State> {
         variant="contained"
       >
         <Typography className={classes.buttonText}>
-          {(allAccounts[selected!] as unknown as Account).slug}
+          {(accounts[id!] as unknown as Account).slug}
         </Typography>
         <ExpandMoreIcon fontSize="small" />
       </Button>
@@ -109,7 +102,7 @@ class AccountMenu extends React.Component<Props, State> {
   }
 
   renderAccountMenu() {
-    const { allAccounts } = this.props;
+    const { account: { accounts } } = this.props;
     const { anchor } = this.state;
 
     return (
@@ -121,9 +114,9 @@ class AccountMenu extends React.Component<Props, State> {
         onClose={this.handleMenuClose}
       >
         {
-          Object.keys(allAccounts).map((id: string) => {
-            const accountId = id as unknown as keyof typeof allAccounts;
-            const slug = allAccounts[accountId].slug;
+          Object.keys(accounts).map((id: string) => {
+            const accountId = id as unknown as keyof typeof accounts;
+            const slug = accounts[accountId].slug;
 
             return (
               <MenuItem key={id} onClick={this.handleMenuSelect(accountId)}>
@@ -137,9 +130,9 @@ class AccountMenu extends React.Component<Props, State> {
   }
 
   render() {
-    const { selected } = this.props;
+    const { account: { id, accounts } } = this.props;
 
-    return selected === null ? null : (
+    return id === null || isEmpty(accounts) ? null : (
       <div>
         {this.renderAccountButton()}
         {this.renderAccountMenu()}
@@ -151,12 +144,12 @@ class AccountMenu extends React.Component<Props, State> {
 const StyledAccountMenu = withStyles(styles)(AccountMenu);
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  ...state.accountInfo,
+  account: state.account,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  load: (accountState: AccountState) => dispatch(load(accountState)),
-  select: (accountId: number) => dispatch(select(accountId)),
+  load: (accounts: Account[]) => dispatch(load(accounts)),
+  select: (account: Account) => dispatch(select(account)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StyledAccountMenu);

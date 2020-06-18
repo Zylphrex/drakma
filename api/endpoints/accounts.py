@@ -8,7 +8,7 @@ from api.models import Account
 from api.serializers import AccountSerializer
 
 
-class AccountApi(LoginRequiredMixin, APIView):
+class AccountsApi(LoginRequiredMixin, APIView):
     def get(self, request):
         slug = request.query_params.get('slug')
         if slug is not None:

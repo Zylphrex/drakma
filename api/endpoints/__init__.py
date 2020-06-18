@@ -1,5 +1,7 @@
-from .account import AccountApi
+from .accounts import AccountsApi
+from .current_account import CurrentAccountApi
 
 __all__ = [
-    'AccountApi',
+    'AccountsApi',
+    'CurrentAccountApi',
 ]

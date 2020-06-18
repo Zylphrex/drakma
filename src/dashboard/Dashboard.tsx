@@ -1,8 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import clsx from 'clsx';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-// import Drawer from '@material-ui/core/Drawer';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +12,11 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import Drawer from './Drawer';
 import Orders from './Orders';
+
+import api from '../api/client';
+import { RootState } from "../app/store";
+import { Account, select } from '../features/accounts/account';
+
 
 const drawerWidth = 240;
 
@@ -72,7 +78,15 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-type Props = WithStyles<typeof styles>;
+interface StateProps {
+  accountId: number | null;
+}
+
+interface DispatchProps {
+  select: (account: Account) => void;
+}
+
+type Props = WithStyles<typeof styles> & StateProps & DispatchProps;
 
 interface State {
   open: boolean;
@@ -82,6 +96,12 @@ export class Dashboard extends React.Component<Props, State> {
   state = {
     open: false,
   };
+
+  async componentDidMount() {
+    const { select } = this.props;
+    const { data: account } = await api.get("/api/current_account/");
+    select(account);
+  }
 
   handleDrawerOpen = () => {
     this.setState({
@@ -147,9 +167,9 @@ export class Dashboard extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { accountId, classes } = this.props;
 
-    return (
+    return accountId === null ? null : (
       <div className={classes.root}>
         <CssBaseline />
         {this.renderAppBar()}
@@ -160,4 +180,14 @@ export class Dashboard extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(Dashboard);
+export const StyledDashboard = withStyles(styles)(Dashboard);
+
+const mapStateToProps = (state: RootState) => ({
+  accountId: state.account.id,
+})
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  select: (account: Account) => dispatch(select(account)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(StyledDashboard);

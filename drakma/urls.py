@@ -21,9 +21,11 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.ReactView.as_view(), name='index'),
-    path('admin/', admin.site.urls),
+    path('', views.IndexView.as_view(), name='index'),
+    path('accounts/<slug>/', views.ReactView.as_view(), name='accounts'),
+
     path('login/', auth_views.LoginView.as_view(template_name="index.html")),
     path('logout/', auth_views.LogoutView.as_view(template_name="index.html")),
+    path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]

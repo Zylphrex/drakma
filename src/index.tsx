@@ -18,8 +18,8 @@ ReactDOM.render(
     <Provider store={store}>
       <Router history={history}>
         <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/" component={Dashboard} />
+          <Route path="/login/" component={Login} />
+          <Route path="/accounts/:slug/" component={Dashboard} />
         </Switch>
       </Router>
     </Provider>

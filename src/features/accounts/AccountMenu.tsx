@@ -1,5 +1,6 @@
-import isEmpty from 'lodash/isEmpty';
 import React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import Button from '@material-ui/core/Button';
@@ -10,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { Account, AccountState, load, select } from './account';
+import { Account, AccountState, load } from './account';
 import api from "../../api/client";
 import { RootState } from "../../app/store";
 
@@ -37,10 +38,16 @@ interface StateProps {
 
 interface DispatchProps {
   load: (accounts: Account[]) => void;
-  select: (account: Account) => void;
 }
 
-type Props = WithStyles<typeof styles> & StateProps & DispatchProps;
+interface RouteProps {
+  slug: string;
+}
+
+type Props = WithStyles<typeof styles> &
+  RouteComponentProps<RouteProps> &
+  StateProps &
+  DispatchProps;
 
 interface State {
   anchor: HTMLElement | null;
@@ -69,20 +76,15 @@ class AccountMenu extends React.Component<Props, State> {
     });
   }
 
-  handleMenuSelect(i: number) {
-    const { select, account: { accounts } } = this.props;
-    return async (event: React.MouseEvent<HTMLLIElement>) => {
-      this.setState({
-        anchor: null,
-      });
-      const account = accounts[i];
-      await api.post("/api/current_account/", {...account});
-      select(account);
+  handleMenuSelect(account: Account) {
+    return () => {
+      this.handleMenuClose();
+      return api.post("/api/current_account/", {...account});
     };
   }
 
   renderAccountButton() {
-    const { classes, account: { id, accounts } } = this.props;
+    const { classes, match: { params } } = this.props;
 
     return (
       <Button
@@ -94,7 +96,7 @@ class AccountMenu extends React.Component<Props, State> {
         variant="contained"
       >
         <Typography className={classes.buttonText}>
-          {(accounts[id!] as unknown as Account).slug}
+          {params.slug}
         </Typography>
         <ExpandMoreIcon fontSize="small" />
       </Button>
@@ -114,12 +116,17 @@ class AccountMenu extends React.Component<Props, State> {
         onClose={this.handleMenuClose}
       >
         {
-          Object.keys(accounts).map((id: string) => {
-            const accountId = id as unknown as keyof typeof accounts;
-            const slug = accounts[accountId].slug;
+          Object.keys(accounts).map((id) => {
+            const account = accounts[id as unknown as keyof typeof accounts];
+            const slug = account.slug;
 
             return (
-              <MenuItem key={id} onClick={this.handleMenuSelect(accountId)}>
+              <MenuItem
+                key={id}
+                component={Link}
+                to={`/accounts/${slug}/`}
+                onClick={this.handleMenuSelect(account)}
+              >
                 <ListItemText primary={slug} />
               </MenuItem>
             );
@@ -130,9 +137,7 @@ class AccountMenu extends React.Component<Props, State> {
   }
 
   render() {
-    const { account: { id, accounts } } = this.props;
-
-    return id === null || isEmpty(accounts) ? null : (
+    return (
       <div>
         {this.renderAccountButton()}
         {this.renderAccountMenu()}
@@ -141,7 +146,9 @@ class AccountMenu extends React.Component<Props, State> {
   }
 }
 
-const StyledAccountMenu = withStyles(styles)(AccountMenu);
+export const StyledAccountMenu = withStyles(styles)(AccountMenu);
+
+export const RoutedStyledAccountMenu = withRouter(StyledAccountMenu);
 
 const mapStateToProps = (state: RootState): StateProps => ({
   account: state.account,
@@ -149,7 +156,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   load: (accounts: Account[]) => dispatch(load(accounts)),
-  select: (account: Account) => dispatch(select(account)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StyledAccountMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(RoutedStyledAccountMenu);

@@ -8,12 +8,10 @@ export interface Account {
 }
 
 export interface AccountState {
-  id: number | null;
   accounts: Record<number, Account>;
 }
 
 const initialState: AccountState = {
-  id: null,
   accounts: {},
 }
 
@@ -28,13 +26,10 @@ export const account = createSlice({
       });
       state.accounts = accounts;
     },
-    select: (state, action: PayloadAction<Account>) => {
-      state.id = action.payload.id;
-    },
   },
 });
 
-export const { load, select } = account.actions;
+export const { load } = account.actions;
 
 export const selectAccount = (state: RootState) => state.account;
 

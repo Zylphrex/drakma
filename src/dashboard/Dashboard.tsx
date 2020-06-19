@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import clsx from 'clsx';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,10 +10,6 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import Drawer from './Drawer';
 import Orders from './Orders';
-
-import api from '../api/client';
-import { RootState } from "../app/store";
-import { Account, select } from '../features/accounts/account';
 
 
 const drawerWidth = 240;
@@ -78,15 +72,7 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface StateProps {
-  accountId: number | null;
-}
-
-interface DispatchProps {
-  select: (account: Account) => void;
-}
-
-type Props = WithStyles<typeof styles> & StateProps & DispatchProps;
+type Props = WithStyles<typeof styles>;
 
 interface State {
   open: boolean;
@@ -96,12 +82,6 @@ export class Dashboard extends React.Component<Props, State> {
   state = {
     open: false,
   };
-
-  async componentDidMount() {
-    const { select } = this.props;
-    const { data: account } = await api.get("/api/current_account/");
-    select(account);
-  }
 
   handleDrawerOpen = () => {
     this.setState({
@@ -167,9 +147,9 @@ export class Dashboard extends React.Component<Props, State> {
   }
 
   render() {
-    const { accountId, classes } = this.props;
+    const { classes } = this.props;
 
-    return accountId === null ? null : (
+    return (
       <div className={classes.root}>
         <CssBaseline />
         {this.renderAppBar()}
@@ -180,14 +160,4 @@ export class Dashboard extends React.Component<Props, State> {
   }
 }
 
-export const StyledDashboard = withStyles(styles)(Dashboard);
-
-const mapStateToProps = (state: RootState) => ({
-  accountId: state.account.id,
-})
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  select: (account: Account) => dispatch(select(account)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(StyledDashboard);
+export default withStyles(styles)(Dashboard);

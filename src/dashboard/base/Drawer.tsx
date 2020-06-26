@@ -1,4 +1,6 @@
 import React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import MuiDrawer from '@material-ui/core/Drawer';
@@ -11,7 +13,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MailIcon from '@material-ui/icons/Mail';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
+
+import { AccountRouteProps } from '../../routes';
+
 
 const drawerWidth = 240;
 
@@ -27,13 +33,9 @@ const styles = (theme: Theme) => createStyles({
   drawerPaper: {
     width: drawerWidth,
   },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
 });
 
-interface Props extends WithStyles<typeof styles> {
+interface Props extends WithStyles<typeof styles>, RouteComponentProps<AccountRouteProps> {
   open: boolean;
   onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onOpen: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -69,7 +71,7 @@ export class Drawer extends React.Component<Props> {
   }
 
   renderDrawer() {
-    const { classes } = this.props;
+    const { classes, match: { params: { slug } } } = this.props;
 
     return (
       <div>
@@ -85,12 +87,10 @@ export class Drawer extends React.Component<Props> {
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem button component={Link} to={`/accounts/${slug}/upload/`}>
+            <ListItemIcon><CloudUploadIcon /></ListItemIcon>
+            <ListItemText primary="Upload Data" />
+          </ListItem>
         </List>
         <Divider />
         {this.renderLogout()}
@@ -108,7 +108,7 @@ export class Drawer extends React.Component<Props> {
         }}
         anchor="left"
         classes={{
-          paper: classes.drawerPaper,
+          paper: classes.drawerPaper
         }}
         onClose={onClose}
         onOpen={onOpen}
@@ -153,4 +153,8 @@ export class Drawer extends React.Component<Props> {
   }
 }
 
-export default withStyles(styles)(Drawer);
+export const StyledDrawer = withStyles(styles)(Drawer);
+
+export const RoutedStyledDrawer = withRouter(StyledDrawer);
+
+export default RoutedStyledDrawer;

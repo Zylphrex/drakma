@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import AccountMenu from "../features/accounts/AccountMenu";
+import AccountMenu from "../../features/accounts/AccountMenu";
 
 
 const styles = (theme: Theme) => createStyles({
@@ -18,6 +18,9 @@ const styles = (theme: Theme) => createStyles({
     [theme.breakpoints.up('sm')]: {
       display: 'none',
     },
+  },
+  title: {
+    flexGrow: 1,
   },
 });
 
@@ -54,8 +57,8 @@ export class AppBar extends React.Component<Props> {
     return (
       <MuiAppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          {this.renderMenuButton}
-          <Typography variant="h6" noWrap>
+          {this.renderMenuButton()}
+          <Typography variant="h6" noWrap className={classes.title}>
             Dashboard
           </Typography>
           {this.renderAccountMenu()}

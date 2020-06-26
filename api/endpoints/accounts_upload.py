@@ -2,8 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.http import Http404
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -20,7 +19,7 @@ class AccountsUploadApi(LoginRequiredMixin, APIView):
             slug = kwargs['slug']
             account = Account.objects.get(holders__in=[request.user], slug=slug)
         except Account.DoesNotExist:
-            raise Http403
+            raise PermissionDenied(detail='No available account with name found.')
 
         activities = csv_file_to_dicts(request.FILES['activities'], [
             ('date', lambda date: datetime.strptime(date, '%m/%d/%Y').date()),

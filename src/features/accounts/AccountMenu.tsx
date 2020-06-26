@@ -14,6 +14,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Account, AccountState, load } from './account';
 import api from "../../api/client";
 import { RootState } from "../../app/store";
+import { AccountRouteProps } from "../../routes";
 
 
 const styles = (theme: Theme) => createStyles({
@@ -40,12 +41,8 @@ interface DispatchProps {
   load: (accounts: Account[]) => void;
 }
 
-interface RouteProps {
-  slug: string;
-}
-
 type Props = WithStyles<typeof styles> &
-  RouteComponentProps<RouteProps> &
+  RouteComponentProps<AccountRouteProps> &
   StateProps &
   DispatchProps;
 
@@ -84,7 +81,7 @@ class AccountMenu extends React.Component<Props, State> {
   }
 
   renderAccountButton() {
-    const { classes, match: { params } } = this.props;
+    const { classes, match: { params: { slug } } } = this.props;
 
     return (
       <Button
@@ -96,7 +93,7 @@ class AccountMenu extends React.Component<Props, State> {
         variant="contained"
       >
         <Typography className={classes.buttonText}>
-          {params.slug}
+          {slug}
         </Typography>
         <ExpandMoreIcon fontSize="small" />
       </Button>
@@ -158,4 +155,9 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   load: (accounts: Account[]) => dispatch(load(accounts)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RoutedStyledAccountMenu);
+export const ConnectedRoutedStyledAccountMenu = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RoutedStyledAccountMenu);
+
+export default ConnectedRoutedStyledAccountMenu;

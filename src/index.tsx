@@ -4,7 +4,8 @@ import { createBrowserHistory } from "history";
 import { Router, Route, Switch } from "react-router-dom";
 
 import './index.css';
-import Dashboard from "./dashboard/Dashboard";
+import MainDashboard from './dashboard/Main';
+import UploadDashboard from './dashboard/Upload';
 import Login from "./account/Login";
 
 import { store } from './app/store';
@@ -19,7 +20,8 @@ ReactDOM.render(
       <Router history={history}>
         <Switch>
           <Route path="/login/" component={Login} />
-          <Route path="/accounts/:slug/" component={Dashboard} />
+          <Route path="/accounts/:slug/upload/" component={UploadDashboard} />
+          <Route path="/accounts/:slug/" component={MainDashboard} />
         </Switch>
       </Router>
     </Provider>

@@ -1,14 +1,16 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from api.models import Account
 from api.serializers import AccountSerializer
 
 
-class AccountsApi(LoginRequiredMixin, APIView):
+class AccountsApi(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         slug = request.query_params.get('slug')
         if slug is not None:

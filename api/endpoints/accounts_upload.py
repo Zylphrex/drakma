@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from api.models import Account, AccountActivity
 from api.serializers import AccountSerializer
@@ -13,7 +13,9 @@ from api.utils.csv import csv_file_to_dicts
 from api.utils.money import BalanceIntegrityException, parse_money
 
 
-class AccountsUploadApi(LoginRequiredMixin, APIView):
+class AccountsUploadApi(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def put(self, request, **kwargs):
         try:
             slug = kwargs['slug']

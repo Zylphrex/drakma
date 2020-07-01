@@ -6,13 +6,12 @@ import Divider from '@material-ui/core/Divider';
 import MuiDrawer from '@material-ui/core/Drawer';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Hidden from '@material-ui/core/Hidden';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import MailIcon from '@material-ui/icons/Mail';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 
@@ -78,12 +77,10 @@ export class Drawer extends React.Component<Props> {
         <div className={classes.toolbar} />
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem button component={Link} to={`/accounts/${slug}/`}>
+            <ListItemIcon><DashboardIcon /></ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
         </List>
         <Divider />
         <List>

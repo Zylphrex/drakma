@@ -1,18 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createBrowserHistory } from "history";
 import { Router, Route, Switch } from "react-router-dom";
 
 import './index.css';
-import MainDashboard from './dashboard/Main';
-import UploadDashboard from './dashboard/Upload';
+import MainDashboard from './dashboards/Main';
+import UploadDashboard from './dashboards/Upload';
 import Login from "./account/Login";
 
+import history from './app/history';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-
-const history = createBrowserHistory();
 
 ReactDOM.render(
   <React.StrictMode>

@@ -8,3 +8,10 @@ export type Activity = {
   balance: number;
 };
 
+export type ActivityStat = {
+  period: number;
+  period_date: string;
+  period_deposit: number;
+  period_withdrawl: number;
+  period_balance: number;
+};

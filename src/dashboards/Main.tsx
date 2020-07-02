@@ -1,21 +1,15 @@
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import clsx from 'clsx';
-import DateFnsUtils from '@date-io/date-fns';
 import { Theme, WithStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import { formatISO, startOfDay, endOfDay } from 'date-fns';
 
-import AccountSummaryChart from './charts/AccountSummaryChart';
+import AreaChart from './charts/AreaChart';
 import Dashboard from './base/Dashboard';
 import api from "../api/client";
-import { Activity } from "../app/types";
+import { ActivityStat } from "../app/types";
 import { AccountRouteProps } from "../routes";
 
 
@@ -44,16 +38,12 @@ const styles = (theme: Theme) => createStyles({
 type Props = WithStyles<typeof styles> & RouteComponentProps<AccountRouteProps>;
 
 type State = {
-  activities: Activity[];
-  startDate: Date | null;
-  endDate: Date | null;
+  activities: ActivityStat[];
 };
 
 export class Main extends React.Component<Props, State> {
   state = {
     activities: [],
-    startDate: null,
-    endDate: null,
   };
 
   componentDidMount() {
@@ -62,13 +52,13 @@ export class Main extends React.Component<Props, State> {
 
   async updateData() {
     const { match: { params: { slug } } } = this.props;
-    const { startDate, endDate } = this.state;
 
-    const url = `/api/accounts/${slug}/activities/`;
-    const params = [{ key: 'startDate', val: startDate}, {key: 'endDate', val: endDate}]
-      .filter(param => param.val !== null)
-      .map(param => `${param.key}=${formatISO(param.val!)}`)
-      .join('&');
+    const url = `/api/accounts/${slug}/activities/stats/`;
+    const params = [
+      'startDate=120d',
+      'endDate=0d',
+      'statsPeriod=10',
+    ].join('&');
     const query = params ? `?${params}` : '';
 
     const { data: activities } = await api.get(`${url}${query}`);
@@ -76,70 +66,34 @@ export class Main extends React.Component<Props, State> {
     this.setState({activities});
   }
 
-  handleStartDateChange = (startDate: Date | null) => {
-    this.setState({
-      startDate: startDate === null ? null : startOfDay(startDate),
-    }, () => this.updateData());
-  }
-
-  handleEndDateChange = (endDate: Date | null) => {
-    this.setState({
-      endDate: endDate === null ? null : endOfDay(endDate),
-    }, () => this.updateData());
-  }
-
-  renderDateRangePicker() {
-    const { startDate, endDate } = this.state;
-
-    return (
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Grid container justify="space-around" alignContent="flex-end">
-          <KeyboardDatePicker
-            disableToolbar
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
-            id="start-date"
-            label="Start Date"
-            value={startDate}
-            onChange={this.handleStartDateChange}
-            KeyboardButtonProps={{
-              'aria-label': 'change start date',
-            }}
-          />
-          <KeyboardDatePicker
-            disableToolbar
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
-            id="end-date"
-            label="End Date"
-            value={endDate}
-            onChange={this.handleEndDateChange}
-            KeyboardButtonProps={{
-              'aria-label': 'change end date',
-            }}
-          />
-        </Grid>
-      </MuiPickersUtilsProvider>
-    );
-  }
-
-  renderAccountSummary(dataKey: string) {
+  renderAccountStats() {
     const { classes } = this.props;
     const { activities } = this.state;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
-      <Grid item xs={12}>
-        <Paper className={fixedHeightPaper}>
-          <AccountSummaryChart 
-            title={`Account ${dataKey.charAt(0).toUpperCase()}${dataKey.slice(1)}`}
-            dataKey={dataKey}
-            activities={activities}
-          />
-        </Paper>
-      </Grid>
+      <React.Fragment>
+        <Grid item xs={12} md={6}>
+          <Paper className={fixedHeightPaper}>
+            <AreaChart
+              title="Account Balance (120 Days)"
+              xKey="period_date"
+              yKey="period_balance"
+              data={activities}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper className={fixedHeightPaper}>
+            <AreaChart
+              title="Account Activity (120 Days)"
+              xKey="period_date"
+              yKey={["period_deposit", "period_withdrawl"]}
+              data={activities}
+            />
+          </Paper>
+        </Grid>
+      </React.Fragment>
     );
   }
 
@@ -152,10 +106,7 @@ export class Main extends React.Component<Props, State> {
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
-              {this.renderDateRangePicker()}
-              {this.renderAccountSummary('balance')}
-              {this.renderAccountSummary('deposit')}
-              {this.renderAccountSummary('withdrawl')}
+              {this.renderAccountStats()}
             </Grid>
           </Container>
         </main>

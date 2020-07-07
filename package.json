@@ -9,6 +9,7 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
     "@reduxjs/toolkit": "^1.2.5",
+    "@sentry/react": "^5.19.0",
     "@types/lodash": "^4.14.155",
     "axios": "^0.19.2",
     "date-fns": "^2.14.0",

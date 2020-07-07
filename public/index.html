@@ -27,6 +27,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
+    <script>
+      {% if sentry_dsn %}
+      window.SENTRY_DSN="{{sentry_dsn}}";
+      {% endif %}
+      {% if sentry_env %}
+      window.SENTRY_ENV="{{sentry_env}}";
+      {% endif %}
+    </script>
+
     <title>React App</title>
   </head>
   <body>

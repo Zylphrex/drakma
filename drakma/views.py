@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -25,4 +27,7 @@ class ReactView(LoginRequiredMixin, APIView):
     template_name = "index.html"
 
     def get(self, request, **kwargs):
-        return Response()
+        return Response({
+            "sentry_dsn": os.environ.get("SENTRY_DSN"),
+            "sentry_env": os.environ.get("SENTRY_ENV"),
+        })

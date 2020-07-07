@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Switch } from "react-router-dom";
+import * as Sentry from '@sentry/react';
 
 import './index.css';
 import MainDashboard from './dashboards/Main';
@@ -11,6 +12,12 @@ import history from './app/history';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+
+
+Sentry.init({
+  dsn: (window as any).SENTRY_DSN,
+  environment: (window as any).SENTRY_ENV,
+});
 
 ReactDOM.render(
   <React.StrictMode>

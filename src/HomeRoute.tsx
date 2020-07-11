@@ -24,8 +24,8 @@ const HomeRoute = () => {
       return <Redirect to="/login/" />
     case 1:
       return <Redirect to={`/accounts/${slug}/`} />
-    case 2:
-      return null;
+    default:
+      return <></>;
   }
 };
 

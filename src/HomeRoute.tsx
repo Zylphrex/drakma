@@ -27,9 +27,6 @@ const HomeRoute = () => {
     case 2:
       return null;
   }
-  return (
-    <></>
-  );
 };
 
 export default HomeRoute;

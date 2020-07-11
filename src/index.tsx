@@ -15,8 +15,8 @@ import * as serviceWorker from './serviceWorker';
 
 
 Sentry.init({
-  dsn: (window as any).SENTRY_DSN,
-  environment: (window as any).SENTRY_ENV,
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  environment: process.env.REACT_APP_SENTRY_ENV,
 });
 
 ReactDOM.render(

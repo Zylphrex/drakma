@@ -3,7 +3,7 @@ package cmd
 import (
   "os"
   "github.com/spf13/cobra"
-  "github.com/zylphrex/drakma/scraper"
+  "github.com/zylphrex/drakma-cli/scraper"
 )
 
 var rootCmd = &cobra.Command{

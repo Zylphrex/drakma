@@ -18,7 +18,7 @@ class AccountsUploadApi(APIView):
 
     def put(self, request, **kwargs):
         try:
-            slug = kwargs['slug']
+            slug = kwargs['account_slug']
             account = Account.objects.get(holders__in=[request.user], slug=slug)
         except Account.DoesNotExist:
             raise PermissionDenied(detail='No available account with name found.')

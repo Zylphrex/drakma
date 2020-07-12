@@ -36,7 +36,7 @@ class AccountActivitiesStatsApi(APIView):
             raise ParseError(detail=f'Invalid stats period: {stats_period}')
 
         try:
-            slug = kwargs['slug']
+            slug = kwargs['account_slug']
             account = Account.objects.get(holders__in=[request.user], slug=slug)
         except Account.DoesNotExist:
             raise Http404

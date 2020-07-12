@@ -2,41 +2,26 @@ package enbridge
 
 import (
   "fmt"
-  "os"
-  "time"
   "github.com/zylphrex/drakma/scraper"
 )
 
-func Run() {
-    opts := EnbridgeScraperOptions{
-      scraper.ScraperOptions{
-        Port: 8080,
-        SeleniumPath: os.Getenv("SELENIUM_PATH"),
-        GeckoDriverPath: os.Getenv("GECKODRIVER_PATH"),
-        DrakmaHost: os.Getenv("DRAKMA_HOST"),
-        DrakmaAccount: os.Getenv("DRAKMA_ACCOUNT"),
-        DrakmaApiToken: os.Getenv("DRAKMA_API_TOKEN"),
-      },
-      os.Getenv("ENBRIDGE_GAS_USERNAME"),
-      os.Getenv("ENBRIDGE_GAS_PASSWORD"),
-    }
+func Run(enbridgeOpts *EnbridgeScraperOptions) {
     s := EnbridgeScraper{}
 
-    err := s.StartService(opts.scraperOptions)
+    err := s.StartService(enbridgeOpts.ScraperOptions)
     if err != nil {
       fmt.Println(err)
     }
     defer s.StopService()
 
-    err = s.StartDriver(opts.scraperOptions)
+    err = s.StartDriver(enbridgeOpts.ScraperOptions)
     if err != nil {
       fmt.Println(err)
     }
     defer s.StopDriver()
 
-    s.Login(opts.username, opts.password)
+    s.Login(enbridgeOpts.Username, enbridgeOpts.Password)
     balance, err := s.ReportBalance()
-    time.Sleep(10 * time.Second)
 
     if err != nil || s.Err != nil {
       if err != nil {
@@ -50,12 +35,12 @@ func Run() {
     }
 
     client := scraper.DrakmaClient{
-      Host: opts.scraperOptions.DrakmaHost,
-      ApiToken: opts.scraperOptions.DrakmaApiToken,
+      BaseUrl: enbridgeOpts.ScraperOptions.DrakmaUrl,
+      ApiToken: enbridgeOpts.ScraperOptions.DrakmaToken,
     }
     endpoint := fmt.Sprintf(
       "/api/accounts/%v/owes/enbridge-gas/",
-      opts.scraperOptions.DrakmaAccount,
+      enbridgeOpts.ScraperOptions.DrakmaAccount,
     )
     amount := fmt.Sprintf("amount=%v", balance)
     _, err = client.Post(endpoint, amount)

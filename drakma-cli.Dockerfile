@@ -20,4 +20,4 @@ ADD https://github.com/mozilla/geckodriver/releases/download/v0.25.0/geckodriver
 RUN cd bin && tar -xf geckodriver-v0.25.0-linux64.tar.gz
 
 ENV SELENIUM_PATH=$WORKDIR/bin/selenium-server-standalone-3.141.59.jar
-ENV GECKODRIVER_PATH=$WORKDIR/bin/geckodriver
+ENV GECKO_DRIVER_PATH=$WORKDIR/bin/geckodriver

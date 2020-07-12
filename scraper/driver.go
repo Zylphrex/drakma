@@ -94,6 +94,8 @@ func (s *Scraper) Type(selector, text string) {
     return
   }
 
+  time.Sleep(interval)
+
   log.Printf("locating element %v", selector)
   elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
   if err != nil {
@@ -115,6 +117,8 @@ func (s *Scraper) Hover(selector string) {
     return
   }
 
+  time.Sleep(interval)
+
   log.Printf("locating element %v", selector)
   elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
   if err != nil {
@@ -135,6 +139,8 @@ func (s *Scraper) Click(selector string) {
   if s.Err != nil {
     return
   }
+
+  time.Sleep(interval)
 
   log.Printf("locating element %v", selector)
   elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
@@ -186,6 +192,8 @@ func (s *Scraper) Text(selector string) (string, error) {
   if s.Err != nil {
     return "", fmt.Errorf("scraper in errored state %v", s.Err)
   }
+
+  time.Sleep(interval)
 
   elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
   if err != nil {

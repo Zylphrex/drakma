@@ -2,7 +2,7 @@ package enbridge
 
 import (
   "fmt"
-  "github.com/zylphrex/drakma/scraper"
+  "github.com/zylphrex/drakma-cli/scraper"
 )
 
 func Run(enbridgeOpts *EnbridgeScraperOptions) {

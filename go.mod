@@ -1,4 +1,4 @@
-module github.com/zylphrex/drakma
+module github.com/zylphrex/drakma-cli
 
 go 1.14
 

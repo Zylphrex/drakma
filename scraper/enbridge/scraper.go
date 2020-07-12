@@ -1,7 +1,7 @@
 package enbridge
 
 import (
-  "github.com/zylphrex/drakma/scraper"
+  "github.com/zylphrex/drakma-cli/scraper"
 )
 
 const enbridgeGasUrl = "https://www.enbridgegas.com/"

@@ -2,7 +2,7 @@ package cmd
 
 import (
   "github.com/spf13/cobra"
-  "github.com/zylphrex/drakma/scraper/enbridge"
+  "github.com/zylphrex/drakma-cli/scraper/enbridge"
 )
 
 var enbridgeCmd = &cobra.Command{

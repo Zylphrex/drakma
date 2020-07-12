@@ -10,20 +10,19 @@ var enbridgeCmd = &cobra.Command{
   Short: "Start Enbridge Gas tasks",
   Long:  "The series of tasks defined are Enbridge Gas specific.",
   Run: func(cmd *cobra.Command, args []string) {
-    enbridge.Run()
+    EnbridgeOpts.ScraperOptions = GlobalOpts
+    enbridge.Run(&EnbridgeOpts)
   },
 }
 
-var taskStrs []string
+var EnbridgeOpts enbridge.EnbridgeScraperOptions
 
 func init() {
-  enbridgeCmd.Flags().StringSliceVarP(
-    &taskStrs,
-    "task",
-    "t",
-    []string{},
-    "Define the tasks to run.",
-  );
+  enbridgeCmd.Flags().StringVar(&EnbridgeOpts.Username, "username", "", "The Enbridge Gas username")
+  enbridgeCmd.MarkFlagRequired("username")
+
+  enbridgeCmd.Flags().StringVar(&EnbridgeOpts.Password, "password", "", "The Enbridge Gas password")
+  enbridgeCmd.MarkFlagRequired("password")
 
   rootCmd.AddCommand(enbridgeCmd)
 }

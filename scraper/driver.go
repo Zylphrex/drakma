@@ -5,6 +5,7 @@ import (
   "log"
   "time"
   "github.com/tebeka/selenium"
+  "github.com/tebeka/selenium/firefox"
 )
 
 const timeout = 60 * time.Second
@@ -13,11 +14,12 @@ const interval = 100 * time.Millisecond
 
 type ScraperOptions struct {
   Port int
+  Headless bool
   SeleniumPath string
   GeckoDriverPath string
-  DrakmaHost string
+  DrakmaUrl string
   DrakmaAccount string
-  DrakmaApiToken string
+  DrakmaToken string
 }
 
 type Scraper struct {
@@ -53,6 +55,12 @@ func (s *Scraper) StopService() {
 func (s *Scraper) StartDriver(scraperOptions ScraperOptions) error {
   log.Printf("starting driver")
   caps := selenium.Capabilities{"browserName": "firefox"}
+  if scraperOptions.Headless {
+    log.Printf("configuring headless mode")
+    f := firefox.Capabilities{}
+    f.Args = append(f.Args, "-headless")
+    caps.AddFirefox(f)
+  }
   seleniumUrl := fmt.Sprintf("http://localhost:%d/wd/hub", scraperOptions.Port)
   driver, err := selenium.NewRemote(caps, seleniumUrl)
   if err != nil {

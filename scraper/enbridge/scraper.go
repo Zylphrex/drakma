@@ -7,9 +7,9 @@ import (
 const enbridgeGasUrl = "https://www.enbridgegas.com/"
 
 type EnbridgeScraperOptions struct {
-  scraperOptions scraper.ScraperOptions
-  username string
-  password string
+  ScraperOptions scraper.ScraperOptions
+  Username string
+  Password string
 }
 
 type EnbridgeScraper struct {

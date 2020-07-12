@@ -9,7 +9,7 @@ import (
 )
 
 type DrakmaClient struct {
-  Host string
+  BaseUrl string
   ApiToken string
 }
 
@@ -30,7 +30,7 @@ func (d *DrakmaClient) Do(req *http.Request) (*http.Response, error) {
 }
 
 func (d *DrakmaClient) Post(endpoint, data string) (*http.Response, error) {
-  url := fmt.Sprintf("%v%v", d.Host, endpoint)
+  url := fmt.Sprintf("%v%v", d.BaseUrl, endpoint)
   body := strings.NewReader(data)
   req, err := d.NewRequest("POST", url, body)
   if err != nil {

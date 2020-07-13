@@ -1,12 +1,14 @@
 name: scrape
 
-on: [push]
+on:
+  schedule:
+    - cron: '0 5,17 * * *'
 
 jobs:
   home:
     runs-on: ubuntu-latest
     steps:
-      - name: scrape enbridge gas
+      - name: Scrape Enbridge Gas
         env:
           DRAKMA_URL: ${{ secrets.DRAKMA_URL }}
           DRAKMA_TOKEN: ${{ secrets.DRAKMA_TOKEN }}

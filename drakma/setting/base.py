@@ -164,3 +164,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+TWILIO_ACCOUNT_SID = None
+TWILIO_AUTH_TOKEN = None
+TWILIO_PHONE_NUMBER = None

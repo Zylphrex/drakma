@@ -1,0 +1,14 @@
+name: scrape
+
+on: [push]
+
+jobs:
+  home:
+    runs-on: ubuntu-latest
+    container: zylphrex/drakma-cli:latest
+    steps:
+      - name: drakma-cli version
+        env:
+          DRAKMA_URL: ${{ secrets.DRAKMA_URL }}
+        run: |
+          drakma-cli enbridge --headless=1 --url="${DRAKMA_URL}" --account=x --token=z

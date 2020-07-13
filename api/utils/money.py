@@ -5,7 +5,11 @@ class BalanceIntegrityException(Exception):
     pass
 
 
+def zero_dollars(currency=CAD):
+    return Money('0', currency)
+
+
 def parse_money(string, currency=CAD):
     if string == '':
-        return Money('0', currency)
+        return zero(currency=currency)
     return Money(string, currency)

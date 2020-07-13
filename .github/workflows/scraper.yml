@@ -15,5 +15,5 @@ jobs:
           HOME_ENBRIDGE_GAS_USERNAME: ${{ secrets.HOME_ENBRIDGE_GAS_USERNAME }}
           HOME_ENBRIDGE_GAS_PASSWORD: ${{ secrets.HOME_ENBRIDGE_GAS_PASSWORD }}
         run: |
-          pwd && ls
+          ls / && find / -type f
           # drakma-cli enbridge --headless=1 --url="${DRAKMA_URL}" --token="${DRAKMA_TOKEN}" --account="${HOME_DRAKMA_ACCOUNT}" --username="${HOME_ENBRIDGE_GAS_USERNAME}" --password="${HOME_ENBRIDGE_GAS_PASSWORD}"

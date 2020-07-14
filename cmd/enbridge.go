@@ -1,6 +1,8 @@
 package cmd
 
 import (
+  "log"
+  "os"
   "github.com/spf13/cobra"
   "github.com/zylphrex/drakma-cli/scraper/enbridge"
 )
@@ -11,7 +13,11 @@ var enbridgeCmd = &cobra.Command{
   Long:  "The series of tasks defined are Enbridge Gas specific.",
   Run: func(cmd *cobra.Command, args []string) {
     EnbridgeOpts.ScraperOptions = GlobalOpts
-    enbridge.Run(&EnbridgeOpts)
+    err := enbridge.Run(&EnbridgeOpts)
+    if err != nil {
+      log.Fatal(err)
+      os.Exit(1)
+    }
   },
 }
 

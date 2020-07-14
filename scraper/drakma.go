@@ -3,6 +3,7 @@ package scraper
 import (
   "fmt"
   "io"
+  "log"
   "net/http"
   "strconv"
   "strings"
@@ -38,5 +39,6 @@ func (d *DrakmaClient) Post(endpoint, data string) (*http.Response, error) {
   }
   req.Header.Add("Content-Length", strconv.Itoa(len(data)))
   req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+  log.Printf("sending POST request to %v", url)
   return d.Do(req)
 }

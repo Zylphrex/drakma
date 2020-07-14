@@ -5,33 +5,30 @@ import (
   "github.com/zylphrex/drakma-cli/scraper"
 )
 
-func Run(enbridgeOpts *EnbridgeScraperOptions) {
+func Run(enbridgeOpts *EnbridgeScraperOptions) error {
     s := EnbridgeScraper{}
 
     err := s.StartService(enbridgeOpts.ScraperOptions)
     if err != nil {
-      fmt.Println(err)
+      return err
     }
     defer s.StopService()
 
     err = s.StartDriver(enbridgeOpts.ScraperOptions)
     if err != nil {
-      fmt.Println(err)
+      return err
     }
     defer s.StopDriver()
 
     s.Login(enbridgeOpts.Username, enbridgeOpts.Password)
     balance, err := s.ReportBalance()
 
-    if err != nil || s.Err != nil {
-      if err != nil {
-        fmt.Println(err)
-      }
+    if err != nil {
+      return err
+    }
 
-      if s.Err != nil {
-        fmt.Println(s.Err)
-      }
-      return
+    if s.Err != nil {
+      return s.Err
     }
 
     client := scraper.DrakmaClient{
@@ -45,6 +42,8 @@ func Run(enbridgeOpts *EnbridgeScraperOptions) {
     amount := fmt.Sprintf("amount=%v", balance)
     _, err = client.Post(endpoint, amount)
     if err != nil {
-        fmt.Println(err)
+      return err
     }
+
+    return nil
 }

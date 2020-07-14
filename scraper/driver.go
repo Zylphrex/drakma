@@ -8,7 +8,7 @@ import (
   "github.com/tebeka/selenium/firefox"
 )
 
-const timeout = 60 * time.Second
+const timeout = 30 * time.Second
 
 const interval = 100 * time.Millisecond
 

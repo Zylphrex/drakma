@@ -3,6 +3,7 @@ package scraper
 import (
   "fmt"
   "log"
+  "strings"
   "time"
   "github.com/tebeka/selenium"
   "github.com/tebeka/selenium/firefox"
@@ -89,15 +90,21 @@ func (s *Scraper) Visit(url string) {
   }
 }
 
+func (s *Scraper) FindElement(selector string) (selenium.WebElement, error) {
+  if s.Err != nil {
+    return nil, fmt.Errorf("scraper in errored state %v", s.Err)
+  }
+
+  s.WaitForElementE(selector)
+  return s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
+}
+
 func (s *Scraper) Type(selector, text string) {
   if s.Err != nil {
     return
   }
 
-  time.Sleep(interval)
-
-  log.Printf("locating element %v", selector)
-  elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
+  elem, err := s.FindElement(selector)
   if err != nil {
     log.Fatalf("failed to locate element %v %v", selector, err)
     s.Err = err
@@ -117,17 +124,13 @@ func (s *Scraper) Hover(selector string) {
     return
   }
 
-  time.Sleep(interval)
-
-  log.Printf("locating element %v", selector)
-  elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
+  elem, err := s.FindElement(selector)
   if err != nil {
     log.Fatalf("failed to locate element %v %v", selector, err)
     s.Err = err
     return
   }
 
-  log.Printf("hovering %v", selector)
   if err := elem.MoveTo(0, 0); err != nil {
     log.Fatalf("failed to hover element %v %v", selector, err)
     s.Err = err
@@ -140,10 +143,7 @@ func (s *Scraper) Click(selector string) {
     return
   }
 
-  time.Sleep(interval)
-
-  log.Printf("locating element %v", selector)
-  elem, err := s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
+  elem, err := s.FindElement(selector)
   if err != nil {
     log.Fatalf("failed to locate element %v %v", selector, err)
     s.Err = err
@@ -153,6 +153,37 @@ func (s *Scraper) Click(selector string) {
   log.Printf("clicking %v", selector)
   if err := elem.Click(); err != nil {
     log.Fatalf("failed to click element %v %v", selector, err)
+    s.Err = err
+    return
+  }
+}
+
+func (s *Scraper) SwitchFrame(selector string) {
+  if s.Err != nil {
+    return
+  }
+
+  elem, err := s.FindElement(selector)
+  if err != nil {
+    log.Fatalf("failed to locate element %v %v", selector, err)
+    s.Err = err
+    return
+  }
+
+  if err := s.SeleniumDriver.SwitchFrame(elem); err != nil {
+    log.Fatalf("failed to switch to frame %v %v", selector, err)
+    s.Err = err
+    return
+  }
+}
+
+func (s *Scraper) RootFrame() {
+  if s.Err != nil {
+    return
+  }
+
+  if err := s.SeleniumDriver.SwitchFrame(nil); err != nil {
+    log.Fatalf("failed to switch to root frame %v", err)
     s.Err = err
     return
   }
@@ -173,6 +204,26 @@ func (s *Scraper) WaitForElementE(selector string) error {
   log.Printf("waiting for element %v", selector)
   if err := s.SeleniumDriver.WaitWithTimeoutAndInterval(cond, timeout, interval); err != nil {
     log.Fatalf("failed to wait for element %v %v", selector, err)
+    return err
+  }
+  return nil
+}
+
+func (s *Scraper) WaitForElementDisappearE(selector string) error {
+  if s.Err != nil {
+    return fmt.Errorf("scraper in errored state %v", s.Err)
+  }
+
+  cond := func(d selenium.WebDriver) (bool, error) {
+    if _, err := d.FindElement(selenium.ByCSSSelector, selector); err != nil {
+      return true, nil
+    }
+    return false, nil
+  }
+
+  log.Printf("waiting for element to disappear %v", selector)
+  if err := s.SeleniumDriver.WaitWithTimeoutAndInterval(cond, timeout, interval); err != nil {
+    log.Fatalf("failed to wait for element to disappear %v %v", selector, err)
     return err
   }
   return nil
@@ -206,4 +257,25 @@ func (s *Scraper) Text(selector string) (string, error) {
   }
 
   return text, nil
+}
+
+func (s *Scraper) WaitForElementText(selector string) error {
+  if s.Err != nil {
+    return fmt.Errorf("scraper in errored state %v", s.Err)
+  }
+
+  cond := func(d selenium.WebDriver) (bool, error) {
+    text, err := s.Text(selector)
+    if err != nil {
+      return false, nil
+    }
+    return strings.TrimSpace(text) != "", nil
+  }
+
+  log.Printf("waiting for element to contain text %v", selector)
+  if err := s.SeleniumDriver.WaitWithTimeoutAndInterval(cond, timeout, interval); err != nil {
+    log.Fatalf("failed to wait for element to contain text %v %v", selector, err)
+    return err
+  }
+  return nil
 }

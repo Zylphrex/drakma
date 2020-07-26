@@ -58,7 +58,6 @@ func (s *RogersScraper) getBalance() (string, error) {
   if err != nil {
     return "", err
   }
-  log.Printf("amount is %v", text)
   // the first character is $ so remove it
   return text[1:], err
 }

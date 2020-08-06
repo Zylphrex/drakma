@@ -11,5 +11,5 @@ def zero_dollars(currency=CAD):
 
 def parse_money(string, currency=CAD):
     if string == '':
-        return zero(currency=currency)
+        return zero_dollars(currency=currency)
     return Money(string, currency)

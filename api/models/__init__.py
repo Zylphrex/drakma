@@ -3,6 +3,7 @@ from .account import Account
 from .amount_owing import AmountOwing
 from .contact import Contact
 from .current_account import CurrentAccount
+from .skipthedishes_order import SkipTheDishesOrder
 
 __all__ = [
     'AccountActivity',
@@ -10,4 +11,5 @@ __all__ = [
     'AmountOwing',
     'Contact',
     'CurrentAccount',
+    'SkipTheDishesOrder',
 ]

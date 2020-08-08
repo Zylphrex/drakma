@@ -23,13 +23,13 @@ class AccountsUploadApi(APIView):
         except Account.DoesNotExist:
             raise PermissionDenied(detail='No available account with name found.')
 
-        activities = csv_file_to_dicts(request.FILES['activities'], [
-            ('date', lambda date: datetime.strptime(date, '%m/%d/%Y').date()),
-            ('description', lambda description: description.strip()),
-            ('withdrawl', parse_money),
-            ('deposit', parse_money),
-            ('balance', parse_money),
-        ])
+        activities = csv_file_to_dicts(request.FILES['activities'], {
+            'date': lambda date: datetime.strptime(date, '%m/%d/%Y').date(),
+            'description': lambda description: description.strip(),
+            'withdrawl': parse_money,
+            'deposit': parse_money,
+            'balance': parse_money,
+        })
 
         try:
             inserted = account.append_activities(activities)

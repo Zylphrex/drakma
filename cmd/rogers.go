@@ -2,7 +2,6 @@ package cmd
 
 import (
   "log"
-  "os"
   "github.com/spf13/cobra"
   "github.com/zylphrex/drakma-cli/scraper/rogers"
 )
@@ -16,7 +15,6 @@ var rogersCmd = &cobra.Command{
     err := rogers.Run(&RogersOpts)
     if err != nil {
       log.Fatal(err)
-      os.Exit(1)
     }
   },
 }

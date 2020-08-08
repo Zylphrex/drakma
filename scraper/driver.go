@@ -40,7 +40,7 @@ func (s *Scraper) StartService(scraperOptions ScraperOptions) error {
     serviceOptions...,
   )
   if err != nil {
-    log.Fatalf("failed to start service %v", err)
+    log.Printf("failed to start service %v", err)
     return err
   }
 
@@ -54,18 +54,22 @@ func (s *Scraper) StopService() {
 }
 
 func (s *Scraper) StartDriver(scraperOptions ScraperOptions) error {
+  capabilities := firefox.Capabilities{}
+  return s.StartDriverWithCapabilities(scraperOptions, capabilities)
+}
+
+func (s *Scraper) StartDriverWithCapabilities(scraperOptions ScraperOptions, capabilities firefox.Capabilities) error {
   log.Printf("starting driver")
   caps := selenium.Capabilities{"browserName": "firefox"}
   if scraperOptions.Headless {
     log.Printf("configuring headless mode")
-    f := firefox.Capabilities{}
-    f.Args = append(f.Args, "-headless")
-    caps.AddFirefox(f)
+    capabilities.Args = append(capabilities.Args, "-headless")
   }
+  caps.AddFirefox(capabilities)
   seleniumUrl := fmt.Sprintf("http://localhost:%d/wd/hub", scraperOptions.Port)
   driver, err := selenium.NewRemote(caps, seleniumUrl)
   if err != nil {
-    log.Fatalf("failed to start driver %v", err)
+    log.Printf("failed to start driver %v", err)
     return err
   }
 
@@ -85,7 +89,7 @@ func (s *Scraper) Visit(url string) {
 
   log.Printf("visiting %v", url)
   if err := s.SeleniumDriver.Get(url); err != nil {
-    log.Fatalf("failed to visit %v", err)
+    log.Printf("failed to visit %v", err)
     s.Err = err
   }
 }
@@ -99,6 +103,15 @@ func (s *Scraper) FindElement(selector string) (selenium.WebElement, error) {
   return s.SeleniumDriver.FindElement(selenium.ByCSSSelector, selector)
 }
 
+func (s *Scraper) FindElements(selector string) ([]selenium.WebElement, error) {
+  if s.Err != nil {
+    return nil, fmt.Errorf("scraper in errored state %v", s.Err)
+  }
+
+  s.WaitForElementE(selector)
+  return s.SeleniumDriver.FindElements(selenium.ByCSSSelector, selector)
+}
+
 func (s *Scraper) Type(selector, text string) {
   if s.Err != nil {
     return
@@ -106,14 +119,14 @@ func (s *Scraper) Type(selector, text string) {
 
   elem, err := s.FindElement(selector)
   if err != nil {
-    log.Fatalf("failed to locate element %v %v", selector, err)
+    log.Printf("failed to locate element %v %v", selector, err)
     s.Err = err
     return
   }
 
   log.Printf("typing %v", selector)
   if err := elem.SendKeys(text); err != nil {
-    log.Fatalf("failed to type element %v", err)
+    log.Printf("failed to type element %v", err)
     s.Err = err
     return
   }
@@ -126,13 +139,13 @@ func (s *Scraper) Hover(selector string) {
 
   elem, err := s.FindElement(selector)
   if err != nil {
-    log.Fatalf("failed to locate element %v %v", selector, err)
+    log.Printf("failed to locate element %v %v", selector, err)
     s.Err = err
     return
   }
 
   if err := elem.MoveTo(0, 0); err != nil {
-    log.Fatalf("failed to hover element %v %v", selector, err)
+    log.Printf("failed to hover element %v %v", selector, err)
     s.Err = err
     return
   }
@@ -145,14 +158,14 @@ func (s *Scraper) Click(selector string) {
 
   elem, err := s.FindElement(selector)
   if err != nil {
-    log.Fatalf("failed to locate element %v %v", selector, err)
+    log.Printf("failed to locate element %v %v", selector, err)
     s.Err = err
     return
   }
 
   log.Printf("clicking %v", selector)
   if err := elem.Click(); err != nil {
-    log.Fatalf("failed to click element %v %v", selector, err)
+    log.Printf("failed to click element %v %v", selector, err)
     s.Err = err
     return
   }
@@ -165,13 +178,13 @@ func (s *Scraper) SwitchFrame(selector string) {
 
   elem, err := s.FindElement(selector)
   if err != nil {
-    log.Fatalf("failed to locate element %v %v", selector, err)
+    log.Printf("failed to locate element %v %v", selector, err)
     s.Err = err
     return
   }
 
   if err := s.SeleniumDriver.SwitchFrame(elem); err != nil {
-    log.Fatalf("failed to switch to frame %v %v", selector, err)
+    log.Printf("failed to switch to frame %v %v", selector, err)
     s.Err = err
     return
   }
@@ -183,7 +196,7 @@ func (s *Scraper) RootFrame() {
   }
 
   if err := s.SeleniumDriver.SwitchFrame(nil); err != nil {
-    log.Fatalf("failed to switch to root frame %v", err)
+    log.Printf("failed to switch to root frame %v", err)
     s.Err = err
     return
   }
@@ -203,7 +216,7 @@ func (s *Scraper) WaitForElementE(selector string) error {
 
   log.Printf("waiting for element %v", selector)
   if err := s.SeleniumDriver.WaitWithTimeoutAndInterval(cond, timeout, interval); err != nil {
-    log.Fatalf("failed to wait for element %v %v", selector, err)
+    log.Printf("failed to wait for element %v %v", selector, err)
     return err
   }
   return nil
@@ -223,7 +236,7 @@ func (s *Scraper) WaitForElementDisappearE(selector string) error {
 
   log.Printf("waiting for element to disappear %v", selector)
   if err := s.SeleniumDriver.WaitWithTimeoutAndInterval(cond, timeout, interval); err != nil {
-    log.Fatalf("failed to wait for element to disappear %v %v", selector, err)
+    log.Printf("failed to wait for element to disappear %v %v", selector, err)
     return err
   }
   return nil
@@ -274,8 +287,23 @@ func (s *Scraper) WaitForElementText(selector string) error {
 
   log.Printf("waiting for element to contain text %v", selector)
   if err := s.SeleniumDriver.WaitWithTimeoutAndInterval(cond, timeout, interval); err != nil {
-    log.Fatalf("failed to wait for element to contain text %v %v", selector, err)
+    log.Printf("failed to wait for element to contain text %v %v", selector, err)
     return err
   }
   return nil
+}
+
+func (s *Scraper) ScrollIntoView(selector string) {
+  if s.Err != nil {
+    return
+  }
+
+  script := fmt.Sprintf("document.querySelector('%v').scrollIntoView()", selector)
+  var args []interface{}
+
+  log.Printf("scrolling to element %v", selector)
+  _, err := s.SeleniumDriver.ExecuteScript(script, args)
+  if err != nil {
+    s.Err = err
+  }
 }

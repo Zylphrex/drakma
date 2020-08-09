@@ -39,10 +39,7 @@ func Run(skipTheDishesOpts *SkipTheDishesOptions) error {
     return s.Err
   }
 
-  fmt.Println(files)
-
   for _, file := range files {
-    fmt.Println(skipTheDishesOpts.ScraperOptions.DrakmaUrl, skipTheDishesOpts.ScraperOptions.DrakmaToken)
     client := scraper.HttpClient{
       BaseUrl: skipTheDishesOpts.ScraperOptions.DrakmaUrl,
       ApiToken: skipTheDishesOpts.ScraperOptions.DrakmaToken,

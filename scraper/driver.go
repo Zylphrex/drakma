@@ -264,6 +264,7 @@ func (s *Scraper) Text(selector string) (string, error) {
     return "", err
   }
 
+  log.Printf("extracting text from element %v", selector)
   text, err := elem.Text()
   if err != nil {
     return "", err

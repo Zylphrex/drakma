@@ -53,6 +53,7 @@ func (s *SkipTheDishesScraper) DownloadWeeklyReport(index int) string {
 
   selector := fmt.Sprintf("#statement-navigator-body ul li:nth-child(%v)", index)
   s.Click(selector)
+
   s.Click("div[data-testid=\"wrapper-statementdetails\"] > div > a:nth-child(1)")
 
   after, err := scraper.ListFileNames(downloadDir)
@@ -83,7 +84,12 @@ func (s *SkipTheDishesScraper) DownloadWeeklyReports(start, end time.Time) []str
   files := []string{}
 
   for i := 1; i <= curLen; i++ {
-    selector := fmt.Sprintf("#statement-navigator-body ul li:nth-child(%v) > div > div:nth-child(1)", i)
+    selector := fmt.Sprintf("#statement-navigator-body ul li:nth-child(%v)", i)
+    s.ScrollIntoView(selector)
+
+    time.Sleep(3 * time.Second)
+
+    selector = fmt.Sprintf("%v > div > div:nth-child(1)", selector)
 
     dateString, err := s.Text(selector)
     if err != nil {
@@ -98,7 +104,10 @@ func (s *SkipTheDishesScraper) DownloadWeeklyReports(start, end time.Time) []str
     }
 
     if start.After(date) || date.After(end) {
-      continue
+      if len(files) == 0 {
+        continue
+      }
+      break
     }
 
     file := s.DownloadWeeklyReport(i)

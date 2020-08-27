@@ -2,6 +2,7 @@ package rogers
 
 import (
   "log"
+  "time"
   "github.com/zylphrex/drakma-cli/scraper"
 )
 
@@ -33,9 +34,22 @@ func (s *RogersScraper) Login(username, password string) {
   s.Type("#password", password)
   log.Printf("logging in")
   s.Click(".primary-button")
+  s.dismissMessageDialog()
   s.RootFrame()
   log.Printf("waiting for account page load")
-  s.WaitForElement(".amount")
+  s.WaitForElement(".ds-price")
+}
+
+func (s *RogersScraper) dismissMessageDialog() {
+  // clicking the close button too early is bad
+  time.Sleep(3 * time.Second)
+  log.Printf("waiting for message diaglog load")
+  if err := s.WaitForElementE("div.sms-recovery-content > div:nth-child(3) > button.recovery-btn"); err == nil {
+    log.Printf("dismiss message diaglog")
+    s.Click(".btn-close")
+  } else {
+    log.Printf("no message dialogs found")
+  }
 }
 
 func (s *RogersScraper) ReportBalance() (string, error) {
@@ -49,12 +63,12 @@ func (s *RogersScraper) ReportBalance() (string, error) {
 
 func (s *RogersScraper) getBalance() (string, error) {
   log.Printf("getting balance text")
-  s.WaitForElement(".amount")
-  err := s.WaitForElementText(".amount")
+  s.WaitForElement(".ds-price")
+  err := s.WaitForElementText(".ds-price")
   if err != nil {
     return "", err
   }
-  text, err := s.Text(".amount")
+  text, err := s.Text(".ds-price")
   if err != nil {
     return "", err
   }

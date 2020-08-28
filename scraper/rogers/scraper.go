@@ -2,6 +2,7 @@ package rogers
 
 import (
   "log"
+  "strings"
   "time"
   "github.com/zylphrex/drakma-cli/scraper"
 )
@@ -72,6 +73,7 @@ func (s *RogersScraper) getBalance() (string, error) {
   if err != nil {
     return "", err
   }
-  // the first character is $ so remove it
-  return text[1:], err
+  // the text is interspersed with new lines so remove it
+  // and the first character is $ so remove it
+  return strings.Join(strings.Split(text, "\n"), "")[1:], err
 }

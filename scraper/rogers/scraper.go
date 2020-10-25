@@ -34,7 +34,7 @@ func (s *RogersScraper) Login(username, password string) {
   s.Type("#username", username)
   s.Type("#password", password)
   log.Printf("logging in")
-  s.Click(".primary-button")
+  s.Click(".signInButton button")
   s.dismissMessageDialog()
   s.RootFrame()
   log.Printf("waiting for account page load")

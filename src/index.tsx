@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Switch } from "react-router-dom";
 import * as Sentry from '@sentry/react';
-import { Integrations as ApmIntegrations } from '@sentry/apm';
+import { Integrations } from '@sentry/tracing';
 
 import './index.css';
 import MainDashboard from './dashboards/Main';
@@ -24,8 +24,11 @@ Sentry.init({
   dsn: SENTRY_DSN,
   environment: SENTRY_ENV,
   integrations: [
-    new ApmIntegrations.Tracing({
-      beforeNavigate: () => store.getState().location.path ?? '/',
+    new Integrations.BrowserTracing({
+      beforeNavigate: context => ({
+        ...context,
+        name: store.getState().location.path ?? '/',
+      }),
     }),
   ],
   tracesSampleRate: 1.0,

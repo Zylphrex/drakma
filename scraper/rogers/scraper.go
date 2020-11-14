@@ -30,7 +30,6 @@ func (s *RogersScraper) Login(username, password string) {
   s.WaitForElementDisappearE("#divAppLoading")
   s.Click("li.o-navLinkList__item:nth-child(4) a.-login")
   log.Printf("typing credentials")
-  s.SwitchFrame(".el-modal iframe")
   s.Type("#username", username)
   s.Type("#password", password)
   log.Printf("logging in")

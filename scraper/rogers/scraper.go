@@ -37,7 +37,7 @@ func (s *RogersScraper) Login(username, password string) {
   s.dismissMessageDialog()
   s.RootFrame()
   log.Printf("waiting for account page load")
-  s.WaitForElement(".ds-price")
+  s.WaitForElement(".amount")
 }
 
 func (s *RogersScraper) dismissMessageDialog() {
@@ -63,12 +63,12 @@ func (s *RogersScraper) ReportBalance() (string, error) {
 
 func (s *RogersScraper) getBalance() (string, error) {
   log.Printf("getting balance text")
-  s.WaitForElement(".ds-price")
-  err := s.WaitForElementText(".ds-price")
+  s.WaitForElement(".amount")
+  err := s.WaitForElementText(".amount")
   if err != nil {
     return "", err
   }
-  text, err := s.Text(".ds-price")
+  text, err := s.Text(".amount")
   if err != nil {
     return "", err
   }
